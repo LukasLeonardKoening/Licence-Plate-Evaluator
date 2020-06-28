@@ -170,14 +170,21 @@ void LicencePlateEvaluator::run() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         auto result = this->_results->receive();
         mutex_cout.lock();
-        if (result.getState() == STOP_NOTRISKY) {
-            std::cout << "[ATTENTION]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is marked as stolen or wanted! Risk of stop is low!";
-        } else if (result.getState() == STOP_RISKY) {
-            std::cout << "[ATTENTION]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is marked as stolen or wanted! Risk of stop is HIGH!";
-        } else if (result.getState() == NORMAL) {
-            std::cout << "[INFO]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is known but not marked.";
-        } else if (result.getState() == UNKNOWN) {
-            std::cout << "[INFO]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is unknown.";
+        switch (result.getState()) {
+            case STOP_NOTRISKY:
+                std::cout << "[ATTENTION]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is marked as stolen or wanted! Risk of stop is low!";
+                break;
+            case STOP_RISKY:
+                std::cout << "[ATTENTION]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is marked as stolen or wanted! Risk of stop is HIGH!";
+                break;
+            case NORMAL:
+                std::cout << "[INFO]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is known but not marked.";
+                break;
+            case UNKNOWN:
+                std::cout << "[INFO]: Vehicle with licence plate '" << result.getDetection().getTotalNumber() << "' is unknown.";
+                break;
+            default:
+                break;
         }
         std::cout << std::endl;
         mutex_cout.unlock();
